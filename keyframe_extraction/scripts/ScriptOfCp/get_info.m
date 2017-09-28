@@ -6,6 +6,7 @@ group_size = 20;
 group_num = 3;
 img_paths =[];
 path_index = 0;
+root_path = pwd(); 
 
 %% 得到训练集图片路径
  im_name{1,1}=im1;
@@ -15,7 +16,7 @@ path_index = 0;
 for index = 1:group_num
     for i = 1:group_size
         path_index  =  path_index+1;
-        name= strcat('.\image_data\',im_name{1,index},'\a (',int2str(i),').jpg');
+        name= strcat(root_path,'\image_data\',im_name{1,index},'\a (',int2str(i),').jpg');
         img_paths{path_index,1} = name;
     end
 end
