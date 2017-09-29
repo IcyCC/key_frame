@@ -51,7 +51,7 @@ system('ffmpeg -i 1.flv -r 1 -y -f image2 image/%1d.jpg');
 D = dir('image/*.jpg');
 frame_num = length(D);%视频帧数量
 for i=1:frame_num  
-    name= strcat('.\image\',int2str(i),'.jpg')  ;
+    name= strcat(root_path,'/image/',int2str(i),'.jpg')  ;
     frame_paths{i,1} = name;%视频帧图片存储位置，名字代表第几秒的关键帧
 end
 [image_paths,time] = deduplication(frame_num,frame_paths);%视频帧去重
@@ -78,12 +78,12 @@ target_pca = normXtest*tranMatrix;
     score = [score,time];
     score = flipud(sortrows(score,1));
     for z = 1:5
-        strtemp=strcat('.\image\',int2str(score(z,2)),'.jpg');
+        strtemp=strcat(root_path,'/image/',int2str(score(z,2)),'.jpg');
         frame{z,1} = '1.flv';
         frame{z,2} = strcat('test/',int2str(score(z,2)),'.jpg');
         frame{z,3} = secondtotime(score(z,2));
         img = imread(strtemp);
-        strtemp=strcat('.\test\',int2str(score(z,2)),'.jpg');
+        strtemp=strcat(root_path,'/test/',int2str(score(z,2)),'.jpg');
         imwrite(img,strtemp);
     end
     
