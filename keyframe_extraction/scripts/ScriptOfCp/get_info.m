@@ -16,7 +16,7 @@ root_path = pwd();
 for index = 1:group_num
     for i = 1:group_size
         path_index  =  path_index+1;
-        name= strcat(root_path,'\image_data\',im_name{1,index},'\a (',int2str(i),').jpg');
+        name= strcat(root_path,'/image_data/',im_name{1,index},'/a (',int2str(i),').jpg');
         img_paths{path_index,1} = name;
     end
 end
