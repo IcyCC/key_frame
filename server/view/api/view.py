@@ -7,7 +7,7 @@ from . import api_bp
 @api_bp.route("/upload_key_word")
 async def upload_key_word(request:Request):
     words = request.args.get('keys')
-    celery_app.send_task(routing_key='words', queue='words', link=write_to_redis)
+    res = celery_app.send_task(routing_key='words', queue='words', link=write_to_redis)
     pass
 
 
@@ -18,4 +18,5 @@ async def upload_key_image(request:Request):
 
 
 def write_to_redis(resp):
-    pass
+    r = resp.result()
+    return r

@@ -7,12 +7,17 @@ CELERY_QUEUES = {"words":{
                 "exchange":"words",
                  "exchange_type":"direct",
                     "binding_key":"words"
+},
+"test":{
+                "exchange":"test",
+                 "exchange_type":"direct",
+                    "binding_key":"test"
             }
         }
 
-CELERY_ROUTES = {
-    "celery_server.task":{
-        "queue":"words",
-        "routing_key":"words"
-    }
-}
+# CELERY_ROUTES = {
+#     "celery_server.task":{
+#         "queue":"words",
+#         "routing_key":"words"
+#     }
+# }
