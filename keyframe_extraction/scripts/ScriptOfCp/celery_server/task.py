@@ -14,8 +14,11 @@ app.config_from_object(celery_config)
 
 eng = matlab.engine.start_matlab()
 s = eng.genpath('./code')
+s2 = eng.genpath('./libsvm-3.22')
 print(s)
+print(s2)
 eng.addpath(s)
+eng.addpath(s2)
 
 print("MATLAB INIT FINISH")
 print("MATLAB PATH %s" % (eng.cd()))
