@@ -23,7 +23,11 @@ eng.addpath(s2)
 print("MATLAB INIT FINISH")
 print("MATLAB PATH %s" % (eng.cd()))
 
-@app.task(queue='words')
+@app.task(queue='words',name = 'wrods')
 def words(words):
     result = eng.get_info(words)
     return result
+
+@app.task(queue='test', name='test')
+def add(a,b):
+    return a+b

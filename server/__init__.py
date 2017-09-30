@@ -1,7 +1,7 @@
 from sanic import Sanic
 from sanic.response import json
 from celery import Celery
-from celery_server import celery_config
+from . import celery_config
 from sanic.log import log
 from redis_middle.redis_middle_class import Conn_db
 
