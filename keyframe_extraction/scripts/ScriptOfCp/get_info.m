@@ -1,6 +1,6 @@
 
 %-----------by chenpei------------
-function [frame] = get_info(im1,im2,im3)
+function [result] = get_info(im1,im2,im3)
 
 group_size = 20;
 group_num = 3;
@@ -8,7 +8,7 @@ img_paths =[];
 path_index = 0;
 root_path = pwd(); 
 
-%% µÃµ½ÑµÁ·¼¯Í¼Æ¬Â·¾¶
+%% å¾—åˆ°è®­ç»ƒé›†å›¾ç‰‡è·¯å¾„
  im_name{1,1}=im1;
  im_name{1,2}=im2;
  im_name{1,3}=im3;
@@ -21,52 +21,52 @@ for index = 1:group_num
     end
 end
 
-%% ÌáÈ¡siftÌØÕ÷£¨ÑµÁ·¼¯ËùÓĞÍ¼Æ¬£©
+%% æå–siftç‰¹å¾ï¼ˆè®­ç»ƒé›†æ‰€æœ‰å›¾ç‰‡ï¼‰
 data_sift = get_sifts(img_paths);
 
- %% ¾ÛÀà½×¶Î£¨K-means£©
-%½«ËùÓĞÍ¼Æ¬siftÌØÕ÷·ÅÔÚÒ»Æğ¾ÛÀà£¬ĞÎ³ÉK£¨K=800£©Î¬ÌØÕ÷
+ %% èšç±»é˜¶æ®µï¼ˆK-meansï¼‰
+%å°†æ‰€æœ‰å›¾ç‰‡siftç‰¹å¾æ”¾åœ¨ä¸€èµ·èšç±»ï¼Œå½¢æˆKï¼ˆK=800ï¼‰ç»´ç‰¹å¾
 
 K=800;
-initMeans = data_sift(randi(size(data_sift,1),1,K),:);%³õÊ¼¾ÛÀàÖĞĞÄ
-[KMeans] = K_Means(data_sift,K,initMeans);%kmeans¾ÛÀà
-[KFeatures] = get_countVectors(KMeans,K,size(img_paths,1));% Í³¼ÆÍ¼Æ¬¿âÃ¿ÕÅÍ¼Æ¬Ã¿¸ö¾ÛÀàÖĞÌØÕ÷µã¸öÊı£¬Ã¿ÕÅÍ¼Æ¬¶ÔÓ¦Ò»¸öKÎ¬ÏòÁ¿
+initMeans = data_sift(randi(size(data_sift,1),1,K),:);%åˆå§‹èšç±»ä¸­å¿ƒ
+[KMeans] = K_Means(data_sift,K,initMeans);%kmeansèšç±»
+[KFeatures] = get_countVectors(KMeans,K,size(img_paths,1));% ç»Ÿè®¡å›¾ç‰‡åº“æ¯å¼ å›¾ç‰‡æ¯ä¸ªèšç±»ä¸­ç‰¹å¾ç‚¹ä¸ªæ•°ï¼Œæ¯å¼ å›¾ç‰‡å¯¹åº”ä¸€ä¸ªKç»´å‘é‡
 
-%% ÌáÈ¡hog+gist+KÎ¬ÌØÕ÷
+%% æå–hog+gist+Kç»´ç‰¹å¾
 data_all = get_allfeatures(KFeatures,img_paths);
 
-%% PCA ½µÎ¬
+%% PCA é™ç»´
 [COEFF,SCORE, latent] = princomp(data_all);
  SelectNum = cumsum(latent)./sum(latent);
  index = find(SelectNum >= 0.95);
  ForwardNum = index(1);
  data_all_pca = SCORE(:,1:ForwardNum);
  
-%% SVMÑµÁ··ÖÀàÆ÷(´Ë´¦ÑµÁ·group_num¸ö)
+%% SVMè®­ç»ƒåˆ†ç±»å™¨(æ­¤å¤„è®­ç»ƒgroup_numä¸ª)
 svm(data_all_pca,group_num,group_size);
 
 
-%% ÊÓÆµÖ¡È¥ÖØ£¬ÌØÕ÷ÌáÈ¡
+%% è§†é¢‘å¸§å»é‡ï¼Œç‰¹å¾æå–
 system('ffmpeg -i 1.flv -r 1 -y -f image2 image/%1d.jpg');
 D = dir('image/*.jpg');
-frame_num = length(D);%ÊÓÆµÖ¡ÊıÁ¿
+frame_num = length(D);%è§†é¢‘å¸§æ•°é‡
 for i=1:frame_num  
     name= strcat(root_path,'/image/',int2str(i),'.jpg')  ;
-    frame_paths{i,1} = name;%ÊÓÆµÖ¡Í¼Æ¬´æ´¢Î»ÖÃ£¬Ãû×Ö´ú±íµÚ¼¸ÃëµÄ¹Ø¼üÖ¡
+    frame_paths{i,1} = name;%è§†é¢‘å¸§å›¾ç‰‡å­˜å‚¨ä½ç½®ï¼Œåå­—ä»£è¡¨ç¬¬å‡ ç§’çš„å…³é”®å¸§
 end
-[image_paths,time] = deduplication(frame_num,frame_paths);%ÊÓÆµÖ¡È¥ÖØ
-image_num = size(image_paths,1);%È¥ÖØºóÊ£ÓàµÄÍ¼Æ¬ÊıÁ¿
-target = frame_features(image_paths,KMeans);%ÌØÕ÷ÌáÈ¡
+[image_paths,time] = deduplication(frame_num,frame_paths);%è§†é¢‘å¸§å»é‡
+image_num = size(image_paths,1);%å»é‡åå‰©ä½™çš„å›¾ç‰‡æ•°é‡
+target = frame_features(image_paths,KMeans);%ç‰¹å¾æå–
 
 
-%% ÊÓÆµÖ¡ÌØÕ÷½µÎ¬
+%% è§†é¢‘å¸§ç‰¹å¾é™ç»´
 tranMatrix = COEFF(:,1:ForwardNum);
 row = size(target,1);
 meanValue = mean(data_all);
 normXtest = target - repmat(meanValue,[row,1]);
 target_pca = normXtest*tranMatrix;
 
-%% Êä³ö·ÖÊı×î¸ßµÄÊÓÆµÖ¡Í¼Æ¬ ¼°Ê±¼ä
+%% è¾“å‡ºåˆ†æ•°æœ€é«˜çš„è§†é¢‘å¸§å›¾ç‰‡ åŠæ—¶é—´
     score = [];
     Structname = strcat('svmStruct','all-',int2str(2));
     load (Structname);
@@ -79,12 +79,11 @@ target_pca = normXtest*tranMatrix;
     score = flipud(sortrows(score,1));
     for z = 1:5
         strtemp=strcat(root_path,'/image/',int2str(score(z,2)),'.jpg');
-        frame{z,1} = '1.flv';
-        frame{z,2} = strcat('test/',int2str(score(z,2)),'.jpg');
-        frame{z,3} = secondtotime(score(z,2));
+        frame{1,1} = '1.flv';
+        frame{1,2} = strcat('test/',int2str(score(z,2)),'.jpg');
+        frame{1,3} = secondtotime(score(z,2));
+        result{z} = frame;
         img = imread(strtemp);
         strtemp=strcat(root_path,'/test/',int2str(score(z,2)),'.jpg');
         imwrite(img,strtemp);
     end
-    
-   
