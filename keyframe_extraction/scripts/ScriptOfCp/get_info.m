@@ -1,6 +1,6 @@
 
 %-----------by chenpei------------
-function [frame] = get_info(im1,im2,im3)
+function [result] = get_info(im1,im2,im3)
 
 group_size = 20;
 group_num = 3;
@@ -79,12 +79,13 @@ target_pca = normXtest*tranMatrix;
     score = flipud(sortrows(score,1));
     for z = 1:5
         strtemp=strcat(root_path,'/image/',int2str(score(z,2)),'.jpg');
-        frame{z,1} = '1.flv';
-        frame{z,2} = strcat('test/',int2str(score(z,2)),'.jpg');
-        frame{z,3} = secondtotime(score(z,2));
+        frame{1,1} = '1.flv';
+        frame{1,2} = strcat('test/',int2str(score(z,2)),'.jpg');
+        frame{1,3} = secondtotime(score(z,2));
+        result{z} = frame;
         img = imread(strtemp);
         strtemp=strcat(root_path,'/test/',int2str(score(z,2)),'.jpg');
         imwrite(img,strtemp);
     end
-    
+  
    
