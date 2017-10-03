@@ -1,9 +1,9 @@
 import ujson
-
+import aiofiles
 import sanic
 from celery import Celery
 from sanic.response import json, file_stream
-
+from sanic.request import Request
 from redis_middle.redis_middle_class import Conn_db
 from . import celery_config
 from engine import eng
@@ -41,15 +41,22 @@ async def upload_key_word(request):
     return json(body=resp)
 
 
-@app.route('/video', methods=['GET'])
-async def get_video(request):
-    path = request.args.get('path')
-    return await file_stream(path)
+@app.route('/video', methods=['GET', 'POST'])
+async def get_video(request:Request):
+    if request.method == 'GET':
+        path = request.args.get('path')
+        return await file_stream(path)
 
-@app.route("/upload_key_image")
-async def upload_key_image(request):
-    image_file = request.files.get('key_image')
-    pass
+    if request.method == 'POST':
+        video_file = request.files.get("video")
+
+        if video_file.type != 'video/x-flv':
+            return json(body={'status':'fail', 'reason':"only support flv"})
+
+        async with aiofiles.open(video_url+'1.flv', 'wb') as f:
+            await f.write(video_file.body)
+        return json(body={'status':"success",'reason':''})
+
 
 
 def write_to_redis(resp):
