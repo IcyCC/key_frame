@@ -1,6 +1,6 @@
 
 %-----------by chenpei------------
-function [result] = get_info(im1,im2,im3)
+function [result] = get_info(im1)
 
 group_size = 20;
 group_num = 3;
@@ -10,8 +10,8 @@ root_path = pwd;
 
 
  im_name{1,1}=im1;
- im_name{1,2}=im2;
- im_name{1,3}=im3;
+ im_name{1,2}='cat';
+ im_name{1,3}='rabbit';
 
 for index = 1:group_num
     for i = 1:group_size
@@ -64,10 +64,9 @@ meanValue = mean(data_all);
 normXtest = target - repmat(meanValue,[row,1]);
 target_pca = normXtest*tranMatrix;
 
-for i=1:group_num
     score = [];
-    Structname = strcat('svmStruct','all-',int2str(i));
-    load (Structname);
+    Structname = strcat('svmStruct','all-',int2str(1));
+   load (Structname);
     w=svmStruct.SVs'*svmStruct.sv_coef;
     b=-svmStruct.rho;
     for j = 1:image_num
@@ -78,12 +77,10 @@ for i=1:group_num
     for z = 1:5
         strtemp=strcat(root_path,'/image/',int2str(score(z,2)),'.jpg');
         frame{1,1} = '1.flv';
-        frame{1,2} = strcat('test/',int2str(score(z,2)),'.jpg');
+        frame{1,2} = strcat(root_path,'test/',int2str(score(z,2)),'.jpg');
         frame{1,3} = secondtotime(score(z,2));
-        result{(i-1)*5+z} = frame;
+        result{z} = frame;
         img = imread(strtemp);
         strtemp=strcat(root_path,'/test/',int2str(score(z,2)),'.jpg');
         imwrite(img,strtemp);
     end
-end
-
