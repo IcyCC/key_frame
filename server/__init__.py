@@ -27,11 +27,9 @@ app.static('/static', 'keyframe_extraction/scripts/ScriptOfCp')
 
 @app.route("/key_frames", methods=['GET'])
 async def upload_key_word(request):
-    key_words = request.args.get('words')
+    key_word = request.args.get('word')
 
-    key_words = ujson.loads(key_words)
-
-    result = eng.get_info(key_words[0], key_words[1], key_words[2], nargout=1)
+    result = eng.get_info(key_word, nargout=1)
     resp = dict(video_url=video_url+result[0][0], data=list())
 
     for item in result:
