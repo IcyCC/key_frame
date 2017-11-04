@@ -56,6 +56,25 @@ async def get_video(request:Request):
         return json(body={'status':"success",'reason':''})
 
 
+@app.route('/image', methods=['GET', 'POST'])
+async def get_video(request:Request):
+    if request.method == 'GET':
+        path = request.args.get('path')
+        return await file_stream(path)
+
+    if request.method == 'POST':
+        image_file = request.files.get("image")
+
+        if image_file.type != '	application/x-jpg' and image_file.type != 'image/jpeg':
+            print(image_file.type)
+            return json(body={'status':'fail', 'reason':"only support jpg"})
+
+        image_url = video_url+'1.jpg'
+
+        async with aiofiles.open(image_url, 'wb') as f:
+            await f.write(image_file.body)
+        return json(body={'status':"success",'reason':''})
+
 
 def write_to_redis(resp):
     r = resp.result()
